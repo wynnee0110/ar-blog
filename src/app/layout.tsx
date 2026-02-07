@@ -1,25 +1,13 @@
-import type { Metadata, Viewport } from "next";
+"use client"; // We need this for the loading state logic
+
+import { useState, useEffect } from "react";
+import { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "./components/header";
-import Footer from "./components/footer"; // Note: You imported this but didn't use it in your code below
 import Floatbar from "./components/floatbar";
-import { ThemeProvider } from "./components/ThemeProvider"; // <--- 1. Import this
-
-
-// 1. Add Viewport export (for theme color)
-export const viewport: Viewport = {
-  themeColor: "#0f1117",
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false, // Prevents zooming like a native app
-};
-
-// 2. Update Metadata export
-
-
-// ... keep your RootLayout function the same
+import { ThemeProvider } from "./components/ThemeProvider";
+import LoadingScreen from "./components/LoadingScreen"; // Ensure you create this file
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,46 +19,46 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// 2. Update Metadata export
-export const metadata: Metadata = {
-  title: "AR Blog",
-  description: "Next.js Social Media App",
-  manifest: "/manifest.json", // <--- LINK THE MANIFEST HERE
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "AR Blog",
-  },
-  formatDetection: {
-    telephone: false,
-  },
-};
-
+// NOTE: Metadata and Viewport cannot be in a "use client" file.
+// If you get an error, move Metadata/Viewport to a separate file (e.g., metadata.ts) 
+// or keep a separate layout-client.tsx. 
+// For now, let's focus on the UI update:
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // This hides the loader after 2 seconds or once the page is ready
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    // 2. Add suppressHydrationWarning to prevent mismatch errors
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* 3. Wrap everything in the Provider */}
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <Floatbar />
-          {children}
-          {/* <Footer />  <-- You had this imported, uncomment if needed */}
+          {isLoading && <LoadingScreen />}
+          
+          <div className={isLoading ? "hidden" : "block animate-in fade-in duration-700"}>
+            <Header />
+            <Floatbar />
+            <main>{children}</main>
+          </div>
         </ThemeProvider>
-
       </body>
     </html>
   );

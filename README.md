@@ -1,62 +1,71 @@
 # 🌐 AR Blog - Next.js Social Media Platform
 
-![Project Status](https://img.shields.io/badge/Status-Active-success)
-![Next.js](https://img.shields.io/badge/Next.js-16.1-black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
-![Supabase](https://img.shields.io/badge/Supabase-Database-green)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC)
+![Project Status](https://img.shields.io/badge/Status-Active-success?style=flat-square)
+![Next.js](https://img.shields.io/badge/Next.js-16.1-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
+![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=flat-square&logo=supabase)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=flat-square&logo=tailwind-css)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 
-A modern, full-featured social media application built with **Next.js 16** and **Supabase**. It features real-time interactions, a rich user interface with dark mode, and unique customization options like animated avatar borders.
+> A modern, serverless social media application built for performance and scale.
+
+**AR Blog** is a full-stack platform featuring real-time interactions, a rich user interface with dark mode, and unique customization options like animated "Legendary" avatar borders.
 
 ---
 
-## 📸 Screenshots
+## 📚 Table of Contents
 
-*(Place screenshots of your Home Feed and Profile Page here)*
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Architecture](#-architecture)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [Database Setup (SQL)](#-database-setup-sql)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ---
 
 ## ✨ Features
 
 ### 👤 User Experience
-* **Authentication:** Secure Sign-up and Login powered by Supabase Auth.
-* **Custom Profiles:** Edit bio, website, and upload avatars.
-* **✨ Legendary Borders:** Unique feature allowing users to unlock animated avatar borders (Rainbow, Glitch, Galaxy, Neon, etc.).
-* **Dark/Light Mode:** Fully responsive theme toggle using Tailwind v4.
+* **Authentication:** Secure Sign-up, Login, and Logout powered by Supabase Auth.
+* **Custom Profiles:** Users can edit their bio, website, and upload profile pictures.
+* **✨ Legendary Borders:** Unique gamified feature allowing users to unlock animated avatar borders (Rainbow, Glitch, Galaxy, Neon, etc.).
+* **Dark/Light Mode:** Fully responsive theme toggle using `next-themes` and Tailwind v4.
 
 ### 📝 Content & Interaction
-* **Create Posts:** Rich text posts with image attachments.
-* **Social Feed:** Infinite scroll-style feed of community posts.
-* **Likes & Comments:** Real-time social interactions.
-* **Follow System:** Follow/Unfollow users to curate your feed.
-* **Search Engine:** Dual-search capability to find **Posts** (by content) and **People** (by username) simultaneously.
+* **Rich Posts:** Create text posts with optional image attachments.
+* **Infinite Feed:** A smooth scrolling feed of community posts.
+* **Social Actions:** Real-time **Likes** and **Comments**.
+* **Follow System:** Follow/Unfollow users to build your network.
+* **Smart Search:** Dual-search engine finding **Posts** (by content) and **People** (by username) simultaneously.
 
 ### ⚙️ Technical Highlights
-* **Real-time Notifications:** Alerts for likes, comments, and follows.
-* **Optimistic UI:** Instant feedback on likes and follows before server confirmation.
-* **Responsive Design:** Mobile-first layout using Tailwind CSS.
+* **Optimistic UI:** Instant feedback on interactions before server confirmation.
+* **Real-time Notifications:** Alerts for new followers and interactions.
+* **Responsive Design:** Mobile-first layout optimized for all devices.
+* **Server Components:** Utilizing Next.js 16 App Router for optimal performance.
 
 ---
 
 ## 🛠️ Tech Stack
 
-This project uses the latest web technologies for performance and scalability.
-
-| Category | Technology | Usage |
+| Category | Technology | Description |
 | :--- | :--- | :--- |
-| **Framework** | [Next.js 16 (App Router)](https://nextjs.org/) | Core application framework |
-| **Language** | [TypeScript](https://www.typescriptlang.org/) | Type safety and logic |
-| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) | Styling and Dark Mode |
-| **Icons** | [Lucide React](https://lucide.dev/) | Beautiful, consistent SVG icons |
-| **Backend** | [Supabase](https://supabase.com/) | PostgreSQL Database & Auth |
-| **Storage** | Supabase Storage | Image hosting for Avatars/Posts |
-| **Deployment** | [Vercel](https://vercel.com/) | Hosting and CI/CD |
+| **Framework** | [Next.js 16](https://nextjs.org/) | App Router, Server Components |
+| **Language** | [TypeScript](https://www.typescriptlang.org/) | Static typing for reliability |
+| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) | Utility-first CSS framework |
+| **Database** | [Supabase](https://supabase.com/) | Postgres Database & Auth |
+| **Icons** | [Lucide React](https://lucide.dev/) | Consistent SVG iconography |
+| **State** | React Hooks | `useState`, `useEffect`, `Suspense` |
+| **Deployment** | [Vercel](https://vercel.com/) | CI/CD and Edge Network |
 
 ---
 
 ## 🏗️ Architecture
 
-The app follows a modern Serverless architecture.
+The app follows a modern Serverless architecture:
 
 * **Frontend:** Next.js handles routing and UI rendering. It uses React Server Components (RSC) for data fetching and Client Components for interactivity.
 * **Backend:** Supabase acts as the "Backend-as-a-Service," providing:
@@ -66,31 +75,62 @@ The app follows a modern Serverless architecture.
 
 ---
 
-## 🚀 Getting Started
+## 📂 Project Structure
 
+```bash
+├── app/
+│   ├── auth/           # Login & Signup pages
+│   ├── profile/        # User profile & editing logic
+│   ├── search/         # Search page with Suspense
+│   ├── globals.css     # Global styles & Tailwind variants
+│   ├── layout.tsx      # Root layout & ThemeProvider
+│   └── page.tsx        # Main Feed (Home)
+├── components/
+│   ├── PostCard.tsx    # Main feed item component
+│   ├── Header.tsx      # Navigation & Search bar
+│   └── ...             # Reusable UI components
+├── lib/
+│   └── supabaseClient.ts # Supabase connection client
+├── public/             # Static assets
+└── package.json        # Dependencies
+
+```
+## 🚀 Getting Started
 Follow these steps to run the project locally.
 
-### 1. Prerequisites
-* Node.js 18+ installed.
-* A [Supabase](https://supabase.com/) account.
+1. Prerequisites
+Node.js 18+ installed.
 
-### 2. Clone the Repository
+A Supabase account.
+
+2. Clone the Repository
+
 ```bash
 git clone [https://github.com/your-username/ar-blog.git](https://github.com/your-username/ar-blog.git)
 cd ar-blog
-3. Install Dependencies
-Bash
+```
+## 3. Install Dependencies
+
+```bash
 npm install
-4. Configure Environment Variables
-Create a .env.local file in the root directory and add your Supabase keys:
+```
 
-Bash
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+## 4. Configure Environment Variables
+Create a .env.local file in the root directory:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-5. Setup Database (SQL)
-Go to your Supabase SQL Editor and run the following schema to create the necessary tables:
+```
+## 5. Run the App
+```bash
+npm run dev
+```
+Open http://localhost:3000 in your browser.
 
-<details> <summary>Click to view SQL Schema</summary>
+### 🗄️ Database Setup (SQL)
+To make the app work, you need to set up the tables in Supabase. Go to your Supabase Dashboard -> SQL Editor and run this script:
+
+<details> <summary><strong>🔻 Click to expand SQL Schema</strong></summary>
 
 SQL
 -- 1. Create Profiles Table
@@ -105,7 +145,22 @@ create table public.profiles (
   updated_at timestamp with time zone
 );
 
--- 2. Create Posts Table
+-- 2. AUTOMATION: Create Profile on Signup (Crucial!)
+-- This ensures every new user gets a row in the profiles table automatically
+create function public.handle_new_user() 
+returns trigger as $$
+begin
+  insert into public.profiles (id, username, full_name, avatar_url)
+  values (new.id, new.email, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url');
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+-- 3. Create Posts Table
 create table public.posts (
   id uuid default gen_random_uuid() primary key,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
@@ -115,7 +170,7 @@ create table public.posts (
   author_id uuid references public.profiles(id) not null
 );
 
--- 3. Create Follows Table
+-- 4. Create Follows Table
 create table public.follows (
   follower_id uuid references public.profiles(id) not null,
   following_id uuid references public.profiles(id) not null,
@@ -123,35 +178,35 @@ create table public.follows (
   primary key (follower_id, following_id)
 );
 
--- 4. Enable Storage (Create 'avatars' and 'posts' buckets in Dashboard)
+-- 5. Enable Storage
+-- Go to Storage -> Create new bucket named 'avatars' (Public)
+-- Go to Storage -> Create new bucket named 'posts' (Public)
 </details>
 
-6. Run the App
-Bash
-npm run dev
-Open http://localhost:3000 in your browser.
+## 🤝 Contributing
+-- Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
+```bash
+Fork the Project
 
-🤝 How to Contribute
-Contributions are welcome! If you'd like to improve the project:
+Create your Feature Branch (git checkout -b feature/AmazingFeature)
 
-Fork the repository.
+Commit your Changes (git commit -m 'Add some AmazingFeature')
 
-Create a new Branch (git checkout -b feature/AmazingFeature).
+Push to the Branch (git push origin feature/AmazingFeature)
 
-Commit your changes (git commit -m 'Add some AmazingFeature').
+Open a Pull Request
+```
 
-Push to the branch (git push origin feature/AmazingFeature).
-
-Open a Pull Request.
-
-🤖 AI Assistance & Resources
+## 🤖 AI Assistance
+```bash
 This project was built with the assistance of AI Thought Partners (Gemini/ChatGPT) to accelerate development.
 
-Mock Data: AI was used to generate SQL scripts for populating the feed with realistic mock posts.
+Mock Data Generation: SQL scripts for populating the feed.
 
-Debugging: AI assisted in resolving Vercel build errors and Next.js hydration issues.
+Complex CSS: "Galaxy" and "Glitch" border animations.
 
-CSS Animations: The complex keyframe animations for the "Galaxy" and "Glitch" borders were generated using AI CSS tools.
+Debugging: Resolving Next.js hydration and Vercel build errors.
 
 📜 License
 Distributed under the MIT License. See LICENSE for more information.
+```

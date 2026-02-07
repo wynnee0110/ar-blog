@@ -47,7 +47,7 @@ export default function HomePage() {
 
       const { data: profilesData } = await supabase
         .from("profiles")
-        .select("id, username, full_name, avatar_url")
+        .select("id, username, full_name, avatar_url, border_variant")
         .in("id", authorIds);
 
       // Create lookup map

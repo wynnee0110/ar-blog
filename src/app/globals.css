@@ -20,3 +20,83 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* --- AVATAR BORDERS --- */
+
+/* Base Wrapper for all avatars */
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+  padding: 3px; /* Width of the border */
+  border-radius: 50%;
+  background: transparent; /* Default */
+}
+
+/* 🌈 1. Rainbow Spin (Gamer Style) */
+.border-rainbow {
+  background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+  background-size: 400%;
+  animation: glowing 20s linear infinite;
+}
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
+
+/* 🏆 2. Golden Halo (Shiny) */
+.border-gold {
+  background: linear-gradient(to bottom right, #FFD700, #FDB931, #FFFFE0, #B8860B);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+/* ⚡ 3. Neon Pulse (Breathing Blue) */
+.border-neon {
+  background: #06b6d4;
+  box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+  animation: pulse-cyan 2s infinite;
+}
+@keyframes pulse-cyan {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(6, 182, 212, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+}
+
+/* 🔥 4. Fire (Animated Red) */
+.border-fire {
+  background: linear-gradient(0deg, #ff0000, #ff8800);
+  box-shadow: 0 -5px 20px rgba(255, 69, 0, 0.6);
+}
+.border-galaxy {
+  background: linear-gradient(to right, #240b36, #c31432, #240b36);
+  background-size: 200% auto;
+  animation: galaxy-spin 3s linear infinite;
+  box-shadow: 0 0 10px rgba(195, 20, 50, 0.6);
+}
+@keyframes galaxy-spin {
+  to { background-position: 200% center; }
+}
+
+/* 👾 6. Glitch (Cyberpunk Stutter) */
+.border-glitch {
+  background: #0f0;
+  animation: glitch-anim 2s infinite linear alternate-reverse;
+}
+@keyframes glitch-anim {
+  0% { box-shadow: -2px 0 #ff00c1, 2px 0 #00fff9; background: #000; }
+  25% { box-shadow: 2px 0 #00fff9, -2px 0 #ff00c1; background: #222; }
+  50% { box-shadow: -1px 0 #ff00c1, 1px 0 #00fff9; background: #111; }
+  100% { box-shadow: 1px 0 #00fff9, -1px 0 #ff00c1; background: #000; }
+}
+
+/* 👻 7. Ghost (Ethereal Pulse) */
+.border-ghost {
+  background: white;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+  animation: ghost-pulse 3s infinite ease-in-out;
+}
+@keyframes ghost-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+  50% { box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}

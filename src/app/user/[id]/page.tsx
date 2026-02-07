@@ -7,9 +7,8 @@ import Link from "next/link";
 import { MapPin, Link as LinkIcon, Edit3, Loader2, UserPlus, UserCheck, X, User } from 'lucide-react';
 import CommentModal from "@/app/components/CommentModal";
 import PostCard, { Post } from "@/app/components/PostCard"; 
-import UserBadge from "@/app/components/UserBadge"; // <--- Import Badge
+import UserBadge from "@/app/components/UserBadge"; 
 
-// 1. Update Type Definition
 type ProfileData = {
   id: string;
   username: string;
@@ -18,7 +17,7 @@ type ProfileData = {
   avatar_url: string | null;
   website: string | null;
   border_variant?: string | null; 
-  badge?: string | null; // <--- Ensure Badge is here
+  badge?: string | null; 
 };
 
 export default function UserProfile() {
@@ -29,12 +28,10 @@ export default function UserProfile() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [posts, setPosts] = useState<Post[]>([]); 
   
-  // Stats
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   
-  // Modals
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<'followers' | 'following' | null>(null);
@@ -49,7 +46,6 @@ export default function UserProfile() {
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUser(user);
 
-      // Fetch Profile (Include Badge)
       const { data: profileData } = await supabase
         .from('profiles')
         .select('*')
@@ -71,7 +67,6 @@ export default function UserProfile() {
         });
       }
 
-      // Fetch Posts
       const { data: postData } = await supabase
         .from("posts")
         .select("*")
@@ -86,7 +81,6 @@ export default function UserProfile() {
         setPosts(postsWithAuthor);
       }
 
-      // Fetch Stats
       const { count: followers } = await supabase
         .from("follows")
         .select("*", { count: 'exact', head: true })
@@ -179,30 +173,24 @@ export default function UserProfile() {
   const borderVariant = profile?.border_variant || 'none'; 
 
   return (
-    // FIXED: Main Background & Text Color
     <main className="flex flex-col items-center min-h-screen bg-gray-50 dark:bg-[#0f1117] text-gray-900 dark:text-gray-200 p-4 font-sans transition-colors duration-300">
       
       <div className="w-full max-w-lg flex flex-col gap-6 mt-10 mb-24">
         
         {/* --- PROFILE CARD --- */}
-        {/* FIXED: Card Background & Border */}
         <div className="bg-white dark:bg-[#1e212b] rounded-2xl shadow-xl overflow-hidden border border-gray-200 dark:border-gray-800 relative transition-colors duration-300">
           
-          {/* Cover Photo */}
           <div className="h-32 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 relative"></div>
 
           <div className="px-6 pb-6">
             <div className="flex justify-between items-start">
               
-              {/* --- INTEGRATED BORDER AVATAR --- */}
               <div className="relative -mt-12">
-                {/* FIXED: Wrapper Background matches Card Background */}
                 <div className={`avatar-wrapper border-${borderVariant} p-1 bg-white dark:bg-[#1e212b] rounded-full inline-block transition-colors duration-300`}>
                   {profile?.avatar_url ? (
                     <img 
                       src={profile.avatar_url} 
                       alt="Avatar" 
-                      // FIXED: Image Border matches Card Background for cutout effect
                       className="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-[#1e212b] shadow-lg bg-white dark:bg-[#1e212b]" 
                     />
                   ) : (
@@ -213,7 +201,6 @@ export default function UserProfile() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="mt-4">
                 {isOwnProfile ? (
                   <button onClick={() => router.push('/profile')} className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-semibold rounded-full border border-gray-300 dark:border-gray-700 transition-colors flex items-center gap-2">
@@ -235,30 +222,41 @@ export default function UserProfile() {
               </div>
             </div>
 
-            {/* Info */}
             <div className="mt-3">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 {profile?.full_name || "User"}
-                {/* FIXED: Render Badge */}
-                <UserBadge badge={profile?.badge} />
+                <UserBadge badge={profile?.badge} size={24} />
               </h2>
               <p className="text-gray-500 text-sm">@{profile?.username || "unknown"}</p>
               <p className="mt-4 text-gray-700 dark:text-gray-300 leading-relaxed text-[15px]">{profile?.bio || "No bio available."}</p>
             </div>
 
-            {/* Meta */}
+            {/* --- META SECTION (WEBSITE FIX) --- */}
             <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 text-gray-500 text-xs">
-              <div className="flex items-center gap-1"><MapPin size={14} /> Earth</div>
+              <div className="flex items-center gap-1"><MapPin size={14} /> Philippines</div>
+              
               {profile?.website && (
                 <div className="flex items-center gap-1 hover:text-indigo-500 dark:hover:text-indigo-400 transition cursor-pointer">
-                  <LinkIcon size={14} /> <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:underline">Website</a>
+                  <LinkIcon size={14} /> 
+                  {/* 👇 This part strips http/https and trailing slashes for display */}
+                  <a 
+                    href={profile.website} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="hover:underline"
+                  >
+                    {profile.website
+    .replace(/^https?:\/\//, '') // 1. Remove http:// or https://
+    .replace(/^www\./, '')       // 2. Remove www.
+    .split('/')[0]               // 3. Remove /path/to/page
+  }
+                  </a>
                 </div>
               )}
             </div>
 
             <div className="h-px bg-gray-200 dark:bg-gray-800 my-6" />
 
-            {/* Stats */}
             <div className="grid grid-cols-3 text-center divide-x divide-gray-200 dark:divide-gray-800">
               <button onClick={() => openModal('following')} className="flex flex-col hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition py-1">
                 <span className="text-gray-900 dark:text-white font-bold text-lg">{followingCount}</span>
@@ -276,7 +274,6 @@ export default function UserProfile() {
           </div>
         </div>
 
-        {/* --- POSTS --- */}
         <h3 className="text-lg font-bold text-gray-900 dark:text-white px-2">
             {isOwnProfile ? "Your Posts" : `${profile?.username || "User"}'s Posts`}
         </h3>
@@ -292,7 +289,7 @@ export default function UserProfile() {
                   full_name: profile?.full_name || "User",
                   avatar_url: profile?.avatar_url || null,
                   border_variant: profile?.border_variant,
-                  badge: profile?.badge // Pass Badge
+                  badge: profile?.badge
                 }
               }}
               currentUserId={currentUser?.id}
@@ -309,10 +306,8 @@ export default function UserProfile() {
         </div>
       </div>
 
-      {/* --- MODALS --- */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 dark:bg-black/80 backdrop-blur-sm animate-in fade-in">
-          {/* FIXED: Modal Colors */}
           <div className="bg-white dark:bg-[#1e212b] border border-gray-200 dark:border-gray-700 w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden transition-colors">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-gray-900 dark:text-white font-bold capitalize">{modalType}</h3>

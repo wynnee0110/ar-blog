@@ -249,7 +249,7 @@ export default function Profile() {
                   <div className="flex flex-col gap-2 mt-2">
                     <span className="text-gray-500 text-xs uppercase font-bold tracking-wide">Avatar Border Style</span>
                     <div className="flex gap-2 flex-wrap">
-                      {['none', 'rainbow', 'gold', 'neon', 'fire'].map((variant) => (
+                      {['none', 'rainbow', 'gold', 'neon', 'fire', 'galaxy', 'glitch', 'ghost'].map((variant) => (
                         <button
                           key={variant}
                           onClick={() => setProfile({ ...profile, border_variant: variant })}
@@ -281,7 +281,11 @@ export default function Profile() {
 
             <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 text-gray-500 text-xs">
               <div className="flex items-center gap-1"><MapPin size={14} /> Philippines</div>
-              <div className="flex items-center gap-1 hover:text-indigo-400 cursor-pointer"><LinkIcon size={14} /> {profile.website ? <a href={profile.website} target="_blank">{profile.website.replace('https://', '')}</a> : 'No website'}</div>
+              <div className="flex items-center gap-1 hover:text-indigo-400 cursor-pointer"><LinkIcon size={14} /> {profile.website ? <a href={profile.website} target="_blank">{profile.website
+    .replace(/^https?:\/\//, '') // 1. Remove http:// or https://
+    .replace(/^www\./, '')       // 2. Remove www.
+    .split('/')[0]               // 3. Remove /path/to/page
+  }</a> : 'No website'}</div>
               <div className="flex items-center gap-1"><Calendar size={14} /> Joined {joinedDate}</div>
             </div>
 

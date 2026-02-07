@@ -130,7 +130,7 @@ export default function PostCard({ post, currentUserId, onDelete, onEdit, onComm
           <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed break-words">{feedContent}</p>
           {post.image_url && (
             <div className="mt-3 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700">
-              <img src={post.image_url} alt="post" className="w-full h-auto object-contain transition-transform duration-500" />
+              <img src={post.image_url} alt="post" className="w-full max-h[400px] object-contain transition-transform duration-500" />
             </div>
           )}
         </div>

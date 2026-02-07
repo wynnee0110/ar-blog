@@ -47,7 +47,7 @@ export default function HomePage() {
 
       const { data: profilesData } = await supabase
         .from("profiles")
-        .select("id, username, full_name, avatar_url, border_variant")
+        .select("id, username, full_name, avatar_url, border_variant, badge")
         .in("id", authorIds);
 
       // Create lookup map
@@ -95,22 +95,22 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1117] flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50  dark:bg-[#0f1117] flex items-center justify-center">
         <Loader2 className="animate-spin text-cyan-400" size={32} />
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#0f1117] text-gray-200 p-4 font-sans flex flex-col items-center">
+    <main className="min-h-screen bg-gray-50 dark:bg-[#0f1117] [#]text-gray-200 p-4 font-sans flex flex-col items-center">
       
       <div className="w-full max-w-lg mt-10 mb-24">
         
         {/* --- HEADER --- */}
         <div className="flex justify-between items-end mb-8 px-2">
           <div>
-            <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Welcome back</p>
-            <h1 className="text-2xl font-bold text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 truncate max-w-[200px] sm:max-w-xs">
+            <p className="text-gray-400 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Welcome back</p>
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 truncate max-w-[200px] sm:max-w-xs">
               {posts.find(p => p.author_id === currentUser.id)?.author?.full_name || currentUser?.email?.split('@')[0]}
             </h1>
           </div>

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { MapPin, Link as LinkIcon, Edit3, Loader2, UserPlus, UserCheck, X, User } from 'lucide-react';
 import CommentModal from "@/app/components/CommentModal";
 import PostCard, { Post } from "@/app/components/PostCard"; 
+import UserBadge from "@/app/components/UserBadge"; // <--- Import Badge
 
 // 1. Update Type Definition
 type ProfileData = {
@@ -16,7 +17,8 @@ type ProfileData = {
   bio: string;
   avatar_url: string | null;
   website: string | null;
-  border_variant?: string | null; // <--- Added
+  border_variant?: string | null; 
+  badge?: string | null; // <--- Ensure Badge is here
 };
 
 export default function UserProfile() {
@@ -47,7 +49,7 @@ export default function UserProfile() {
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUser(user);
 
-      // Fetch Profile
+      // Fetch Profile (Include Badge)
       const { data: profileData } = await supabase
         .from('profiles')
         .select('*')
@@ -64,7 +66,8 @@ export default function UserProfile() {
           bio: "Profile not set up.",
           avatar_url: null,
           website: null,
-          border_variant: 'none'
+          border_variant: 'none',
+          badge: null
         });
       }
 
@@ -76,11 +79,9 @@ export default function UserProfile() {
         .order("created_at", { ascending: false });
 
       if (postData) {
-        // We map the posts here to include the author data immediately
-        // so the PostCard doesn't look empty while loading
         const postsWithAuthor = postData.map(p => ({
           ...p,
-          author: profileData // Attach the profile we just fetched
+          author: profileData 
         }));
         setPosts(postsWithAuthor);
       }
@@ -168,23 +169,24 @@ export default function UserProfile() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#0f1117] flex items-center justify-center">
+      <main className="min-h-screen bg-gray-50 dark:bg-[#0f1117] flex items-center justify-center transition-colors duration-300">
         <Loader2 className="animate-spin text-cyan-400" size={32} />
       </main>
     );
   }
 
   const isOwnProfile = currentUser?.id === targetUserId;
-  // Default to 'none' if undefined
   const borderVariant = profile?.border_variant || 'none'; 
 
   return (
-    <main className="flex flex-col items-center min-h-screen bg-[#0f1117] text-gray-200 p-4 font-sans">
+    // FIXED: Main Background & Text Color
+    <main className="flex flex-col items-center min-h-screen bg-gray-50 dark:bg-[#0f1117] text-gray-900 dark:text-gray-200 p-4 font-sans transition-colors duration-300">
       
       <div className="w-full max-w-lg flex flex-col gap-6 mt-10 mb-24">
         
         {/* --- PROFILE CARD --- */}
-        <div className="bg-[#1e212b] rounded-2xl shadow-xl overflow-hidden border border-gray-800 relative">
+        {/* FIXED: Card Background & Border */}
+        <div className="bg-white dark:bg-[#1e212b] rounded-2xl shadow-xl overflow-hidden border border-gray-200 dark:border-gray-800 relative transition-colors duration-300">
           
           {/* Cover Photo */}
           <div className="h-32 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 relative"></div>
@@ -192,17 +194,19 @@ export default function UserProfile() {
           <div className="px-6 pb-6">
             <div className="flex justify-between items-start">
               
-              {/* --- 2. INTEGRATED BORDER AVATAR --- */}
+              {/* --- INTEGRATED BORDER AVATAR --- */}
               <div className="relative -mt-12">
-                <div className={`avatar-wrapper border-${borderVariant} p-1 bg-[#1e212b] rounded-full inline-block`}>
+                {/* FIXED: Wrapper Background matches Card Background */}
+                <div className={`avatar-wrapper border-${borderVariant} p-1 bg-white dark:bg-[#1e212b] rounded-full inline-block transition-colors duration-300`}>
                   {profile?.avatar_url ? (
                     <img 
                       src={profile.avatar_url} 
                       alt="Avatar" 
-                      className="w-24 h-24 rounded-full object-cover border-4 border-[#1e212b] shadow-lg bg-[#1e212b]" 
+                      // FIXED: Image Border matches Card Background for cutout effect
+                      className="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-[#1e212b] shadow-lg bg-white dark:bg-[#1e212b]" 
                     />
                   ) : (
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-700 to-gray-600 flex items-center justify-center text-3xl font-bold text-white border-4 border-[#1e212b] shadow-lg">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-700 to-gray-600 flex items-center justify-center text-3xl font-bold text-white border-4 border-white dark:border-[#1e212b] shadow-lg">
                       {profile?.username?.[0]?.toUpperCase() || "?"}
                     </div>
                   )}
@@ -212,7 +216,7 @@ export default function UserProfile() {
               {/* Action Buttons */}
               <div className="mt-4">
                 {isOwnProfile ? (
-                  <button onClick={() => router.push('/profile')} className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-sm font-semibold rounded-full border border-gray-700 transition-colors flex items-center gap-2">
+                  <button onClick={() => router.push('/profile')} className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-semibold rounded-full border border-gray-300 dark:border-gray-700 transition-colors flex items-center gap-2">
                     <Edit3 size={14} /> Edit Profile
                   </button>
                 ) : (
@@ -220,8 +224,8 @@ export default function UserProfile() {
                     onClick={handleFollowToggle}
                     className={`px-4 py-2 text-sm font-bold rounded-full transition-all flex items-center gap-2 ${
                       isFollowing 
-                        ? "bg-transparent border border-gray-600 text-white hover:border-red-500/50 hover:text-red-400" 
-                        : "bg-white text-black hover:bg-gray-200"
+                        ? "bg-transparent border border-gray-600 text-gray-900 dark:text-white hover:border-red-500/50 hover:text-red-500" 
+                        : "bg-black dark:bg-white text-white dark:text-black hover:opacity-80"
                     }`}
                   >
                     {isFollowing ? <UserCheck size={16} /> : <UserPlus size={16} />}
@@ -233,35 +237,39 @@ export default function UserProfile() {
 
             {/* Info */}
             <div className="mt-3">
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">{profile?.full_name || "User"}</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                {profile?.full_name || "User"}
+                {/* FIXED: Render Badge */}
+                <UserBadge badge={profile?.badge} />
+              </h2>
               <p className="text-gray-500 text-sm">@{profile?.username || "unknown"}</p>
-              <p className="mt-4 text-gray-300 leading-relaxed text-[15px]">{profile?.bio || "No bio available."}</p>
+              <p className="mt-4 text-gray-700 dark:text-gray-300 leading-relaxed text-[15px]">{profile?.bio || "No bio available."}</p>
             </div>
 
             {/* Meta */}
             <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 text-gray-500 text-xs">
               <div className="flex items-center gap-1"><MapPin size={14} /> Earth</div>
               {profile?.website && (
-                <div className="flex items-center gap-1 hover:text-indigo-400 transition cursor-pointer">
+                <div className="flex items-center gap-1 hover:text-indigo-500 dark:hover:text-indigo-400 transition cursor-pointer">
                   <LinkIcon size={14} /> <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:underline">Website</a>
                 </div>
               )}
             </div>
 
-            <div className="h-px bg-gray-800 my-6" />
+            <div className="h-px bg-gray-200 dark:bg-gray-800 my-6" />
 
             {/* Stats */}
-            <div className="grid grid-cols-3 text-center divide-x divide-gray-800">
-              <button onClick={() => openModal('following')} className="flex flex-col hover:bg-white/5 rounded-lg transition py-1">
-                <span className="text-white font-bold text-lg">{followingCount}</span>
+            <div className="grid grid-cols-3 text-center divide-x divide-gray-200 dark:divide-gray-800">
+              <button onClick={() => openModal('following')} className="flex flex-col hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition py-1">
+                <span className="text-gray-900 dark:text-white font-bold text-lg">{followingCount}</span>
                 <span className="text-gray-500 text-xs uppercase tracking-wide">Following</span>
               </button>
-              <button onClick={() => openModal('followers')} className="flex flex-col hover:bg-white/5 rounded-lg transition py-1">
-                <span className="text-white font-bold text-lg">{followersCount}</span>
+              <button onClick={() => openModal('followers')} className="flex flex-col hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition py-1">
+                <span className="text-gray-900 dark:text-white font-bold text-lg">{followersCount}</span>
                 <span className="text-gray-500 text-xs uppercase tracking-wide">Followers</span>
               </button>
               <div className="flex flex-col py-1">
-                <span className="text-white font-bold text-lg">{posts.length}</span>
+                <span className="text-gray-900 dark:text-white font-bold text-lg">{posts.length}</span>
                 <span className="text-gray-500 text-xs uppercase tracking-wide">Posts</span>
               </div>
             </div>
@@ -269,7 +277,7 @@ export default function UserProfile() {
         </div>
 
         {/* --- POSTS --- */}
-        <h3 className="text-lg font-bold text-white px-2">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white px-2">
             {isOwnProfile ? "Your Posts" : `${profile?.username || "User"}'s Posts`}
         </h3>
         
@@ -277,14 +285,14 @@ export default function UserProfile() {
           {posts.map((post) => (
             <PostCard 
               key={post.id}
-              // 3. Pass Border Variant to Posts
               post={{
                 ...post,
                 author: {
                   username: profile?.username || "User",
                   full_name: profile?.full_name || "User",
                   avatar_url: profile?.avatar_url || null,
-                  border_variant: profile?.border_variant // <--- Integrated here
+                  border_variant: profile?.border_variant,
+                  badge: profile?.badge // Pass Badge
                 }
               }}
               currentUserId={currentUser?.id}
@@ -303,11 +311,12 @@ export default function UserProfile() {
 
       {/* --- MODALS --- */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[#1e212b] border border-gray-700 w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-gray-700">
-              <h3 className="text-white font-bold capitalize">{modalType}</h3>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-white bg-gray-800 p-1 rounded-full"><X size={18} /></button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 dark:bg-black/80 backdrop-blur-sm animate-in fade-in">
+          {/* FIXED: Modal Colors */}
+          <div className="bg-white dark:bg-[#1e212b] border border-gray-200 dark:border-gray-700 w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden transition-colors">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-gray-900 dark:text-white font-bold capitalize">{modalType}</h3>
+              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800 p-1 rounded-full"><X size={18} /></button>
             </div>
             <div className="max-h-[60vh] overflow-y-auto p-2">
               {modalLoading ? (
@@ -318,19 +327,21 @@ export default function UserProfile() {
                 <div className="flex flex-col gap-2">
                   {modalUsers.map((u) => (
                     <Link href={`/user/${u.id}`} key={u.id} onClick={() => setShowModal(false)}>
-                      <div className="flex items-center gap-3 p-2 hover:bg-white/5 rounded-xl transition cursor-pointer">
-                        {/* 4. Pass border to Modal Users too */}
+                      <div className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl transition cursor-pointer">
                         <div className={`avatar-wrapper border-${u.border_variant || 'none'} p-[2px] rounded-full`}>
                             {u.avatar_url ? (
-                            <img src={u.avatar_url} alt="Av" className="w-10 h-10 rounded-full object-cover border-2 border-[#1e212b]" />
+                            <img src={u.avatar_url} alt="Av" className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-[#1e212b]" />
                             ) : (
-                            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold border-2 border-[#1e212b]">
+                            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-white font-bold border-2 border-white dark:border-[#1e212b]">
                                 {u.username?.[0] || <User size={16} />}
                             </div>
                             )}
                         </div>
                         <div>
-                          <p className="text-white font-semibold text-sm">{u.full_name}</p>
+                          <p className="text-gray-900 dark:text-white font-semibold text-sm flex items-center gap-1">
+                            {u.full_name}
+                            <UserBadge badge={u.badge} />
+                          </p>
                           <p className="text-gray-500 text-xs">@{u.username}</p>
                         </div>
                       </div>

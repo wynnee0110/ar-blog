@@ -104,16 +104,15 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#0f1117]/80 backdrop-blur-xl transition-colors">
+    <header className="sticky top-0 z-40 w-full border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#252836] backdrop-blur-xl transition-colors">
       <div className="flex h-16 w-full items-center justify-between px-4 max-w-lg mx-auto gap-4">
         
         {/* --- LOGO --- */}
-        <Link href="/" className="flex-shrink-0">
-          <h2 className="select-none font-black italic text-3xl text-transparent bg-clip-text bg-white from-cyan-400 to-blue-500 cursor-pointer">
-            a
-          </h2>
-        </Link>
-
+<Link href="/" className="flex-shrink-0">
+  <h2 className="text-3xl font-black italic select-none cursor-pointer text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+    a
+  </h2>
+</Link>
         {/* --- SEARCH BAR --- */}
         <form onSubmit={handleSearch} className="relative group flex-1 max-w-[200px] sm:max-w-[240px]">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">

@@ -5,6 +5,7 @@ import { supabase } from "@/app/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import CommentModal from "@/app/components/CommentModal";
 import PostCard, { Post } from "@/app/components/PostCard"; 
+import UserBadge from "@/app/components/UserBadge"; // <--- 1. Import Badge
 import Link from "next/link"; 
 import { MapPin, Link as LinkIcon, Calendar, Edit3, Loader2, Camera, Save, X, User } from 'lucide-react';
 
@@ -16,7 +17,8 @@ type ProfileData = {
   bio: string;
   avatar_url: string;
   website: string;
-  border_variant?: string; // <--- Added Border Variant
+  border_variant?: string; 
+  badge?: string | null; // <--- 2. Add Badge to Type
 };
 
 export default function Profile() {
@@ -37,14 +39,15 @@ export default function Profile() {
   const [modalUsers, setModalUsers] = useState<ProfileData[]>([]);
   const [modalLoading, setModalLoading] = useState(false);
 
-  // Profile Data
+  // Profile Data Init
   const [profile, setProfile] = useState<ProfileData>({
     username: "",
     full_name: "",
     bio: "",
     avatar_url: "",
     website: "",
-    border_variant: "none", // Default
+    border_variant: "none",
+    badge: null, // <--- 3. Init Badge
   });
 
   const router = useRouter();
@@ -59,7 +62,7 @@ export default function Profile() {
       }
       setUser(user);
 
-      // Fetch Profile
+      // Fetch Profile (select('*') automatically fetches 'badge' if column exists)
       const { data: profileData } = await supabase
         .from('profiles')
         .select('*')
@@ -149,12 +152,16 @@ export default function Profile() {
   const updateProfile = async () => {
     try {
       setLoading(true);
+      
+      // Safety: Exclude 'badge' from updates so users can't edit it via this form
+      const { badge, ...restOfProfile } = profile;
+
       const updates = { 
         id: user.id, 
-        ...profile, 
-        border_variant: profile.border_variant, // <--- Saving the variant
+        ...restOfProfile, 
         updated_at: new Date() 
       };
+
       const { error } = await supabase.from('profiles').upsert(updates);
       if (error) throw error;
       setIsEditing(false);
@@ -196,9 +203,8 @@ export default function Profile() {
               <div className="relative -mt-12 group">
                 <div className="p-1 bg-white dark:bg-[#1e212b] rounded-full inline-block relative transition-colors">
                   
-                  {/* 👇 ANIMATED BORDER WRAPPER */}
+                  {/* ANIMATED BORDER WRAPPER */}
                   <div className={`avatar-wrapper border-${profile.border_variant || 'none'}`}>
-                    
                     {profile.avatar_url ? (
                       <img src={profile.avatar_url} alt="Avatar" className="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-[#1e212b] shadow-lg" />
                     ) : (
@@ -206,7 +212,6 @@ export default function Profile() {
                         {profile.username ? profile.username[0].toUpperCase() : "U"}
                       </div>
                     )}
-
                   </div>
 
                   {isEditing && (
@@ -240,7 +245,7 @@ export default function Profile() {
                   <textarea value={profile.bio || ""} onChange={(e) => setProfile({ ...profile, bio: e.target.value })} placeholder="Bio..." className="bg-gray-100 dark:bg-black/20 border border-gray-300 dark:border-gray-700 rounded-lg p-2 text-gray-700 dark:text-gray-300 text-sm outline-none" />
                   <input type="text" value={profile.website || ""} onChange={(e) => setProfile({ ...profile, website: e.target.value })} placeholder="Website" className="bg-gray-100 dark:bg-black/20 border border-gray-300 dark:border-gray-700 rounded-lg p-2 text-gray-500 text-xs outline-none" />
                   
-                  {/* 👇 BORDER SELECTOR UI */}
+                  {/* BORDER SELECTOR UI */}
                   <div className="flex flex-col gap-2 mt-2">
                     <span className="text-gray-500 text-xs uppercase font-bold tracking-wide">Avatar Border Style</span>
                     <div className="flex gap-2 flex-wrap">
@@ -263,7 +268,11 @@ export default function Profile() {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">{profile.full_name || "User"}<span className="text-blue-400 bg-blue-400/10 p-1 rounded-full text-[10px]">✓</span></h2>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-1">
+                    {profile.full_name || "User"}
+                    {/* 4. Render Badge Here */}
+                    <UserBadge badge={profile.badge} size = {24}/>
+                  </h2>
                   <p className="text-gray-500 text-sm">@{profile.username || "username"}</p>
                   <p className="mt-4 text-gray-700 dark:text-gray-300 leading-relaxed text-[15px]">{profile.bio || "No bio yet."}</p>
                 </>
@@ -308,7 +317,8 @@ export default function Profile() {
                     username: profile.username,
                     full_name: profile.full_name,
                     avatar_url: profile.avatar_url,
-                    border_variant: profile.border_variant // Pass variant to posts too!
+                    border_variant: profile.border_variant,
+                    badge: profile.badge // <--- 5. Pass Badge to PostCard
                 }
               }}
               currentUserId={user?.id}
@@ -345,7 +355,11 @@ export default function Profile() {
                           </div>
                         )}
                         <div>
-                          <p className="text-gray-900 dark:text-white font-semibold text-sm">{u.full_name}</p>
+                          <p className="text-gray-900 dark:text-white font-semibold text-sm flex items-center gap-1">
+                            {u.full_name}
+                            {/* Render Badge in Modal List Too */}
+                            <UserBadge badge={u.badge} />
+                          </p>
                           <p className="text-gray-500 text-xs">@{u.username}</p>
                         </div>
                       </div>

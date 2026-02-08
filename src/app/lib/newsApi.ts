@@ -48,7 +48,7 @@ export const fetchTechNews = async (): Promise<NewsPost[]> => {
         username: "gnews",
         avatar_url: "https://cdn-icons-png.flaticon.com/512/21/21601.png", 
         badge: "bot",
-        border_variant: "neon"
+        border_variant: "fire"
       }
     }));
 

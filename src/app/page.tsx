@@ -32,8 +32,7 @@ export default function HomePage() {
   const [viewingGroupIndex, setViewingGroupIndex] = useState<number | null>(null);
   // 2. STORY UI STATES
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [viewingStories, setViewingStories] = useState<any[] | null>(null); // Stores Array of stories
-
+  
   // --- NEW: LOGIC TO GROUP STORIES ---
   const groupedStories = useMemo(() => {
     if (!stories.length) return [];
@@ -245,8 +244,15 @@ export default function HomePage() {
           storyGroups={groupedStories} // Pass ALL groups
           initialGroupIndex={viewingGroupIndex} // Pass where to start
           onClose={() => setViewingGroupIndex(null)}
+        
+        currentUserId={currentUser?.id}
+        onStoryDeleted={() => updateFeed(true)}
+        
         />
+
+
       )}
+      
 
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }

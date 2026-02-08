@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Share2, X, MoreHorizontal, Trash2, Edit3 } from 'lucide-react';
 import LikeButton from "./LikeButton";
 import CommentButton from "./CommentButton"; 
+import { formatDistanceToNow } from 'date-fns';
 
 export type Post = {
   id: string;
@@ -100,6 +101,14 @@ export default function PostCard({ post, currentUserId, onDelete, onEdit, onComm
     </div>
   );
 
+  const timeAgo = post.created_at 
+    ? formatDistanceToNow(new Date(post.created_at), { addSuffix: true })
+        .replace('about ', '') // Optional: cleans up "about 10 minutes ago" to "10 minutes ago"
+        .replace('less than a minute ago', 'just now')
+    : "";
+
+  // ... rest of your logic
+
   return (
     <>
       {/* --- FEED CARD VIEW --- */}
@@ -115,12 +124,20 @@ export default function PostCard({ post, currentUserId, onDelete, onEdit, onComm
                 <img src={post.author?.avatar_url || ""} alt="" className="w-9 h-9 rounded-full object-cover border-2 border-white dark:border-[#252836]" />
               </div>
             </Link>
-            <div className="flex flex-col ">
-              <span className="text-gray-900 dark:text-white font-semibold text-sm flex items-center gap-0">
-                {displayName}
-                <UserBadge badge={post.author?.badge} size = {16} />
-              </span>
-            </div>
+  <div className="flex flex-col leading-tight">
+  {/* TOP ROW: Name and Badge */}
+  <div className="flex items-center gap-0">
+    <span className="text-gray-900 dark:text-white font-semibold text-sm">
+      {displayName}
+    </span>
+    <UserBadge badge={post.author?.badge} size={16} />
+  </div>
+
+  {/* BOTTOM ROW: Time ago */}
+  <span className="text-[11px] text-gray-500 dark:text-gray-400">
+    {timeAgo}
+  </span>
+</div>
           </div>
           {!isModalOpen && <ActionMenu />}
         </div>

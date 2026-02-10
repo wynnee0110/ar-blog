@@ -202,7 +202,7 @@ export default function SettingsPage() {
 
         <div className="text-center mt-6 mb-12">
             <p className="text-xs text-gray-400">App Version 1.1.0</p>
-            <p className="text-[10px] text-gray-500 mt-1">© archive</p>
+            <p className="text-[10px] text-gray-500 mt-1">© archivo</p>
         </div>
 
       </div>
